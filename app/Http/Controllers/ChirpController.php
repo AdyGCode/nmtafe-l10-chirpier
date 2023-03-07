@@ -17,17 +17,14 @@ class ChirpController extends Controller
     public function index(): View
     {
 //        return response('Hello, World');
-        return view('chirps.index');
+        $chirps = Chirp::with('user')->latest()->get();
+        $hello = 'Boo!';
+        return view('chirps.index',[
+            "chirps"=>$chirps,
+            "hello"=>$hello,
+        ]);
     }
 
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
 
     /**
      * Store a newly created resource in storage.
