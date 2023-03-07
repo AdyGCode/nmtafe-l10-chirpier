@@ -23,11 +23,14 @@ Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
-# VERB      URI         Action      Route Name
-# GET       /chirps     index       chirps.index
-# POST      /chirps     store       chirps.store
+# VERB      URI                     Action      Route Name
+# GET       /chirps                 index       chirps.index
+# POST      /chirps                 store       chirps.store
+# GET       /chirps/{chirp}/edit    edit        chirps.edit
+# PUT/PATCH /chirps/{chirp}         update      chirps.update
+# DELETE    /chirps/{chirp}         destroy     chirps.destroy
 Route::resource('chirps', ChirpController::class)
-    ->only(['index','store'])
+    ->only(['index','store', 'edit', 'update', 'destroy'])
     ->middleware(['auth','verified']);
 
 Route::middleware('auth')->group(function () {
