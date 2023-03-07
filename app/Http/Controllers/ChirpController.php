@@ -6,6 +6,7 @@ use App\Models\Chirp;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
+
 //use Illuminate\Http\Response;
 
 class ChirpController extends Controller
@@ -19,9 +20,9 @@ class ChirpController extends Controller
 //        return response('Hello, World');
         $chirps = Chirp::with('user')->latest()->get();
         $hello = 'Boo!';
-        return view('chirps.index',[
-            "chirps"=>$chirps,
-            "hello"=>$hello,
+        return view('chirps.index', [
+            "chirps" => $chirps,
+            "hello" => $hello,
         ]);
     }
 
@@ -55,9 +56,13 @@ class ChirpController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Chirp $chirp)
+    public function edit(Chirp $chirp): View
     {
         //
+        $this->authorize('update', $chirp);
+        return view('chirps.edit',
+            ['chirp' => $chirp]
+        );
     }
 
     /**
@@ -66,6 +71,17 @@ class ChirpController extends Controller
     public function update(Request $request, Chirp $chirp)
     {
         //
+        $this->authorize('update', $chirp);
+        $validated = $request->validate([
+            'message' => [
+                'required',
+                'string',
+                'max:255',
+                'min:5',
+            ],
+        ]);
+        $chirp->update($validated);
+        return redirect(route('chirps.index'));
     }
 
     /**
@@ -73,6 +89,8 @@ class ChirpController extends Controller
      */
     public function destroy(Chirp $chirp)
     {
-        //
+        $this->authorize('delete', $chirp);
+        $chirp->delete();
+        return redirect(route('chirps.index'));
     }
 }
